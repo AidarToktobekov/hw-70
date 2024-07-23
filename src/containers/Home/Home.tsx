@@ -1,10 +1,12 @@
 import { useEffect } from "react";
-import { fetchContacts } from "../../store/contactsThunk";
+import { deleteContact, fetchContacts } from "../../store/contactsThunk";
 import { useAppDispatch } from "../../app/hooks";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import OneContact from "../../components/Contact/OneContact";
 import { showModal } from "../../store/contactsSlice";
+import { NavLink } from "react-router-dom";
+import Spinner from "../../components/Spinner/Spinner";
 
 const Home = ()=>{
     const dispatch = useAppDispatch();
@@ -14,7 +16,7 @@ const Home = ()=>{
     useEffect(() => {
         dispatch(fetchContacts());
         
-      }, [dispatch]);
+      }, []);
 
       const hideModal = ()=>{
         dispatch(showModal({modalState: 'none', index: null}))
@@ -22,6 +24,13 @@ const Home = ()=>{
       let contact;
       if(contacts.modal.index !== null){
         contact = contacts.contacts[contacts.modal.index];
+      }
+
+      const deleteContacts = ()=>{
+        if(contacts.modal.index !== null){
+            dispatch(deleteContact(contacts.contacts[contacts.modal.index].id)) 
+            dispatch(showModal({modalState: 'none', index: null}))
+        }
       }
       
 
@@ -45,18 +54,22 @@ const Home = ()=>{
                 </div>
             </div>
             <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" className="btn btn-primary">Save changes</button>
+                <NavLink to={'/edit/'+ contact?.id} className="btn btn-primary" data-bs-dismiss="modal">Edit</NavLink>
+                <button type="button" className="btn btn-danger" onClick={deleteContacts}>Delete</button>
             </div>
             </div>
         </div>
         </div>
         <div className="list-group flex-row flex-wrap justify-content-center gap-4" >
-            {contacts.contacts.map((contact, index)=>{
+        {contacts.fetchLoading ?(
+            <Spinner />
+        ) :( 
+            contacts.contacts.map((contact, index)=>{
                 return(
                     <OneContact key={index} index={index} contact={contact}></OneContact>
                 )
-            })}
+            })
+            )}
         </div>
         </>
     )

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { ApiContacts, Contact } from "../types";
+import { ApiContact, ApiContacts, Contact } from "../types";
 import { AppDispatch } from "../app/store";
 import axiosApi from "../axiosApi";
 
@@ -38,5 +38,16 @@ export const createContacts = createAsyncThunk<void, ApiContact>(
     'contact/createContacts',
     async (apiContact) => {
       await axiosApi.post('/phoneBook.json', apiContact);
+    },
+  );
+
+  export interface EditContact {
+    id: string;
+    apiContact: ApiContact;
+  }
+export const editContact = createAsyncThunk<void, EditContact>(
+    'dishes/update',
+    async ({ id, apiContact }) => {
+      await axiosApi.put(`/phoneBook/${id}.json`, apiContact);
     },
   );

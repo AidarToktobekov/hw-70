@@ -7,14 +7,12 @@ interface Contacts{
     fetchLoading: boolean;
     createLoading: boolean;
     deleteLoading: boolean;
-    photo: string;
     modal: {modalState: string, index: number | null}
 }
 
 const initialState: Contacts = {
     contacts: [],
     modal: {modalState: 'none', index: null},
-    photo: '',
     fetchLoading: false,
     createLoading: false,
     deleteLoading: false,
@@ -28,9 +26,6 @@ const contactSlice = createSlice({
         showModal: (state, {payload})=>{
             state.modal.modalState = payload.modalState;
             state.modal.index = payload.index;
-        },
-        changePhoto: (state, {payload})=>{
-            state.photo = payload;
         },
     },
     extraReducers: (builder) => {
@@ -69,6 +64,6 @@ const contactSlice = createSlice({
 });
   
   export const contactsReducer = contactSlice.reducer;
-  export const { showModal, changePhoto } = contactSlice.actions;
+  export const { showModal } = contactSlice.actions;
 
   

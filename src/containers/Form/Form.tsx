@@ -1,10 +1,7 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { RootState } from "../../app/store";
+import { FormEvent, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch } from "../../app/hooks";
-import { changePhoto } from "../../store/contactsSlice";
-import { createContacts } from "../../store/contactsThunk";
+import { createContacts, editContact } from "../../store/contactsThunk";
 import { ApiContact, ContactMutation } from "../../types";
 
 interface Props{
@@ -13,16 +10,11 @@ interface Props{
 
 const Form:React.FC<Props> = ({existingContact})=>{
     const param = useParams();
-    console.log(param.id);
+    const navigate = useNavigate();
 
-    const contacts = useSelector((state: RootState) => state.contacts)
     const dispatch = useAppDispatch();
 
     
-    const changeUrl = (event: ChangeEvent<HTMLInputElement>)=>{
-        dispatch(changePhoto(event.target.value))
-        
-    }
     const emptyState: ContactMutation = {
         name: '',
         phone: '',
@@ -45,7 +37,15 @@ const Form:React.FC<Props> = ({existingContact})=>{
 
     const addContact =(event: FormEvent)=>{
         event.preventDefault();
-        dispatch(createContacts(contactMutation))
+        if(param.id === undefined){
+            dispatch(createContacts(contactMutation));
+        }
+        else{
+            const id = param.id;
+            dispatch(editContact({id: id, apiContact: contactMutation}));
+
+        }
+        navigate('/')
     }
     return(
         <>
